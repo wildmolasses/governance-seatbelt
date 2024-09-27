@@ -9,7 +9,7 @@ import { parseEther } from '@ethersproject/units'
 import { provider } from './ethers'
 import mftch, { FETCH_OPT } from 'micro-ftch'
 // @ts-ignore
-const fetchUrl = mftch.default
+const fetchUrl = mftch
 import {
   generateProposalId,
   getGovernor,
@@ -42,6 +42,7 @@ import {
 } from '../../types'
 import { writeFileSync } from 'fs'
 
+console.log(fetchUrl)
 const TENDERLY_FETCH_OPTIONS = { type: 'json', headers: { 'X-Access-Key': TENDERLY_ACCESS_TOKEN } }
 const DEFAULT_FROM = '0xD73a92Be73EfbFcF3854433A5FcbAbF9c1316073' // arbitrary EOA not used on-chain
 
@@ -249,13 +250,13 @@ async function simulateNew(config: SimulationConfigNew): Promise<SimulationResul
  */
 async function simulateProposed(config: SimulationConfigProposed): Promise<SimulationResult> {
   const { governorAddress, governorType, proposalId } = config
-
   // --- Get details about the proposal we're simulating ---
   const network = await provider.getNetwork()
   const blockNumberToUse = (await getLatestBlock(network.chainId)) - 3 // subtracting a few blocks to ensure tenderly has the block
   const latestBlock = await provider.getBlock(blockNumberToUse)
   const blockRange = [0, latestBlock.number]
   const governor = getGovernor(governorType, governorAddress)
+  console.log('ok')
 
   const [_proposal, proposalCreatedLogs, timelock] = await Promise.all([
     getProposal(governorType, governorAddress, proposalId),
@@ -313,7 +314,6 @@ async function simulateProposed(config: SimulationConfigProposed): Promise<Simul
       ? BigNumber.from(latestBlock.timestamp).add(simBlock.sub(proposal.endBlock!).mul(12))
       : proposal.endTime!.add(1)
   const eta = simTimestamp // set proposal eta to be equal to the timestamp we simulate at
-
   // Compute transaction hashes used by the Timelock
   const txHashes = targets.map((target, i) => {
     const [val, sig, calldata] = [values[i], sigs[i], calldatas[i]]

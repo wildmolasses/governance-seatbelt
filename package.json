@@ -4,7 +4,6 @@
   "engines": {
     "node": ">=14.16"
   },
-  "type": "module",
   "description": "Make governance safer",
   "scripts": {
     "compile": "hardhat compile",
@@ -43,5 +42,9 @@
   },
   "devDependencies": {
     "prettier": "^2.3.2"
+  },
+  "volta": {
+    "node": "18.20.4",
+    "yarn": "1.22.10"
   }
 }

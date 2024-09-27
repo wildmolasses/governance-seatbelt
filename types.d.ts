@@ -57,7 +57,7 @@ export type ProposalActions = [
 // TODO If adding support for a third governor, instead of hardcoding optional governor-specific
 // fields, make this a union type of each governor's individual proposal type.
 export interface ProposalStruct {
-  id: BigNumber
+  id?: BigNumber
   proposer?: string
   eta: BigNumber
   startBlock?: BigNumber // Compound governor

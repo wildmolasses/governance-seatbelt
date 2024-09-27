@@ -12,7 +12,7 @@ import { GovernorType, ProposalEvent, ProposalStruct } from '../../types'
 
 // --- Exported methods ---
 export async function inferGovernorType(address: string): Promise<GovernorType> {
-  if (address === '0xB3a87172F555ae2a2AB79Be60B336D2F7D0187f0') return 'alpha'
+  if (address === '0x690e775361AD66D1c4A25d89da9fCd639F5198eD') return 'alpha'
 
   const abi = ['function initialProposalId() external view returns (uint256)']
   const governor = new Contract(address, abi, provider)
@@ -41,6 +41,7 @@ export async function getProposal(
   proposalId: BigNumberish
 ): Promise<ProposalStruct> {
   const governor = getGovernor(governorType, address)
+  console.log(proposalId)
   if (governorType === 'alpha') return governor.proposals(proposalId)
   if (governorType === 'bravo') return governor.proposals(proposalId)
 
@@ -75,7 +76,7 @@ export async function getTimelock(governorType: GovernorType, address: string) {
 
 export async function getVotingToken(governorType: GovernorType, address: string, proposalId: BigNumberish) {
   const governor = getGovernor(governorType, address)
-  if (governorType === 'alpha') return erc20(await governor.pool()) // Only supports POOL.
+  if (governorType === 'alpha') return erc20('0x31c8EAcBFFdD875c74b94b077895Bd78CF1E64A3') // Only supports RAD.
   if (governorType === 'bravo') {
     // Get voting token and total supply
     const govSlots = getBravoSlots(proposalId)
@@ -145,7 +146,10 @@ export async function generateProposalId(
     description: '',
   }
 ): Promise<BigNumber> {
-  if (governorType === 'alpha') throw new Error('generateProposalId not supported for GovernorAlpha')
+  if (governorType === 'alpha') {
+    // throw new Error('generateProposalId not supported for GovernorAlpha')
+    return BigNumber.from(0)
+  }
   // Fetch proposal count from the contract and increment it by 1.
   if (governorType === 'bravo') {
     const count: BigNumber = await governorBravo(address).proposalCount()
